@@ -1,0 +1,1088 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Favourite TV Shows</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=Courier+Prime:wght@400;700&family=Special+Elite&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:        #080810;
+    --surface:   #0f0f1a;
+    --card:      #13131f;
+    --border:    #1e1e32;
+    --border2:   #2a2a45;
+    --red:       #e63946;
+    --red-dim:   rgba(230,57,70,0.15);
+    --red-glow:  rgba(230,57,70,0.35);
+    --gold:      #c9a84c;
+    --gold-dim:  rgba(201,168,76,0.2);
+    --cream:     #f0eee8;
+    --muted:     #6a6a82;
+    --faded:     #3a3a55;
+  }
+
+  *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--cream);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ─── NOISE OVERLAY ─── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E");
+    opacity: 0.025;
+    pointer-events: none;
+    z-index: 9999;
+  }
+
+  /* ─── HEADER ─── */
+  header {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 6rem 2rem 5rem;
+    overflow: hidden;
+  }
+
+  .header-bg {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 80% 60% at 50% 40%, rgba(230,57,70,0.08) 0%, transparent 70%),
+      radial-gradient(ellipse 40% 40% at 80% 20%, rgba(201,168,76,0.06) 0%, transparent 60%),
+      linear-gradient(180deg, #080810 0%, #0a0a16 50%, #080810 100%);
+    z-index: 0;
+  }
+
+  /* Horizontal scan lines */
+  .header-bg::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 3px,
+      rgba(255,255,255,0.012) 3px,
+      rgba(255,255,255,0.012) 4px
+    );
+  }
+
+  .header-content {
+    position: relative;
+    z-index: 1;
+  }
+
+  .header-eyebrow {
+    font-family: 'Special Elite', cursive;
+    font-size: 0.72rem;
+    letter-spacing: 8px;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 2rem;
+    opacity: 0;
+    animation: riseIn 0.9s 0.2s ease forwards;
+  }
+
+  header h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(3.5rem, 10vw, 8rem);
+    font-weight: 900;
+    line-height: 0.95;
+    letter-spacing: -2px;
+    color: var(--cream);
+    opacity: 0;
+    animation: riseIn 0.9s 0.45s ease forwards;
+    margin-bottom: 1.5rem;
+  }
+
+  header h1 em {
+    font-style: italic;
+    color: var(--red);
+    display: block;
+  }
+
+  .header-rule {
+    width: 60px;
+    height: 2px;
+    background: var(--gold);
+    margin: 0 auto 1.5rem;
+    opacity: 0;
+    animation: riseIn 0.9s 0.65s ease forwards;
+  }
+
+  .header-sub {
+    font-family: 'Courier Prime', monospace;
+    font-size: 0.85rem;
+    color: var(--muted);
+    letter-spacing: 3px;
+    opacity: 0;
+    animation: riseIn 0.9s 0.8s ease forwards;
+  }
+
+  .header-scroll-hint {
+    position: absolute;
+    bottom: 2.5rem;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    opacity: 0;
+    animation: riseIn 1s 1.4s ease forwards;
+  }
+
+  .scroll-line {
+    width: 1px;
+    height: 48px;
+    background: linear-gradient(to bottom, var(--gold), transparent);
+    animation: scrollPulse 2s 1.4s ease-in-out infinite;
+  }
+
+  .scroll-label {
+    font-family: 'Special Elite', cursive;
+    font-size: 0.6rem;
+    letter-spacing: 4px;
+    color: var(--gold);
+    text-transform: uppercase;
+    writing-mode: vertical-lr;
+    opacity: 0.6;
+  }
+
+  @keyframes scrollPulse {
+    0%, 100% { opacity: 0.4; transform: scaleY(1); }
+    50% { opacity: 1; transform: scaleY(1.15); }
+  }
+
+  /* ─── NAV ─── */
+  nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(8,8,16,0.75);
+    backdrop-filter: blur(24px) saturate(1.4);
+    -webkit-backdrop-filter: blur(24px) saturate(1.4);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0;
+    padding: 0 1rem;
+  }
+
+  nav::before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 1px;
+    background: var(--red);
+    transition: width 0.6s ease;
+  }
+
+  nav:hover::before { width: 100%; }
+
+  nav a {
+    color: var(--muted);
+    text-decoration: none;
+    font-family: 'Special Elite', cursive;
+    font-size: 0.75rem;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    padding: 1.1rem 2rem;
+    transition: color 0.2s;
+    position: relative;
+  }
+
+  nav a::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 50%; right: 50%;
+    height: 2px;
+    background: var(--red);
+    transition: left 0.25s ease, right 0.25s ease;
+  }
+
+  nav a:hover, nav a.active {
+    color: var(--cream);
+  }
+
+  nav a:hover::after, nav a.active::after {
+    left: 20%; right: 20%;
+  }
+
+  .nav-brand {
+    font-family: 'Playfair Display', serif;
+    font-size: 0.95rem;
+    font-style: italic;
+    color: var(--red);
+    margin-right: auto;
+    padding: 1rem 1.5rem;
+    letter-spacing: 0;
+  }
+
+  /* ─── CONTAINER ─── */
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem;
+  }
+
+  /* ─── SECTION HEADER ─── */
+  .section-header {
+    text-align: center;
+    padding: 5rem 1rem 3rem;
+  }
+
+  .section-header .eyebrow {
+    font-family: 'Special Elite', cursive;
+    font-size: 0.68rem;
+    letter-spacing: 6px;
+    color: var(--red);
+    text-transform: uppercase;
+    display: block;
+    margin-bottom: 0.75rem;
+  }
+
+  .section-header h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    font-weight: 700;
+    color: var(--cream);
+    line-height: 1.1;
+  }
+
+  .section-header h2 em {
+    font-style: italic;
+    color: var(--gold);
+  }
+
+  .section-rule {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin: 1.25rem auto 0;
+    max-width: 300px;
+  }
+
+  .section-rule::before, .section-rule::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(to right, transparent, var(--border2), transparent);
+  }
+
+  .section-rule span {
+    color: var(--gold);
+    font-size: 0.9rem;
+    opacity: 0.7;
+  }
+
+  /* ─── SHOW CARDS ─── */
+  #shows { padding-bottom: 5rem; }
+
+  .shows-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .show-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    overflow: hidden;
+    position: relative;
+    transition: transform 0.35s cubic-bezier(0.25,0.46,0.45,0.94),
+                border-color 0.35s ease,
+                box-shadow 0.35s ease;
+    opacity: 0;
+    transform: translateY(30px);
+  }
+
+  .show-card.visible {
+    opacity: 1;
+    transform: translateY(0);
+    transition: opacity 0.6s ease, transform 0.6s ease,
+                border-color 0.35s ease, box-shadow 0.35s ease;
+  }
+
+  .show-card:hover {
+    transform: translateY(-6px) scale(1.01);
+    border-color: var(--red);
+    box-shadow: 0 20px 50px rgba(0,0,0,0.6), 0 0 30px var(--red-dim);
+  }
+
+  /* Ribbon */
+  .show-card::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--red), var(--gold), var(--red));
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.35s ease;
+  }
+
+  .show-card:hover::after { transform: scaleX(1); }
+
+  .card-poster-wrap {
+    position: relative;
+    overflow: hidden;
+    aspect-ratio: 2/3;
+  }
+
+  .card-poster {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.5s ease, filter 0.5s ease;
+    filter: brightness(0.9) contrast(1.05) saturate(0.85);
+  }
+
+  .show-card:hover .card-poster {
+    transform: scale(1.06);
+    filter: brightness(1) contrast(1.05) saturate(1);
+  }
+
+  .card-poster-placeholder {
+    width: 100%;
+    aspect-ratio: 2/3;
+    background: linear-gradient(160deg, var(--surface) 0%, var(--bg) 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Playfair Display', serif;
+    font-size: 3rem;
+    color: var(--red-dim);
+    font-weight: 700;
+  }
+
+  /* Poster overlay gradient */
+  .card-poster-wrap::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 50%;
+    background: linear-gradient(to top, var(--card), transparent);
+    pointer-events: none;
+  }
+
+  .card-body { padding: 1.4rem 1.5rem 1.5rem; }
+
+  .card-genre {
+    font-family: 'Special Elite', cursive;
+    font-size: 0.65rem;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--red);
+    margin-bottom: 0.35rem;
+  }
+
+  .card-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--cream);
+    margin-bottom: 0.2rem;
+    line-height: 1.2;
+  }
+
+  .card-years {
+    font-size: 0.73rem;
+    color: var(--muted);
+    letter-spacing: 1px;
+    margin-bottom: 0.8rem;
+    font-family: 'Courier Prime', monospace;
+  }
+
+  .card-rating {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 0.9rem;
+  }
+
+  .stars { color: var(--gold); font-size: 0.85rem; letter-spacing: 2px; }
+
+  .rating-num {
+    font-family: 'Playfair Display', serif;
+    font-weight: 700;
+    font-size: 0.9rem;
+    color: var(--cream);
+    background: var(--red-dim);
+    border: 1px solid rgba(230,57,70,0.3);
+    padding: 1px 8px;
+    border-radius: 2px;
+  }
+
+  .card-review {
+    font-size: 0.82rem;
+    line-height: 1.7;
+    color: var(--muted);
+    border-left: 2px solid var(--red);
+    padding-left: 0.8rem;
+    font-style: italic;
+    margin-bottom: 1rem;
+    font-family: 'Courier Prime', monospace;
+  }
+
+  .card-footer {
+    display: flex;
+    justify-content: space-between;
+    padding-top: 0.8rem;
+    border-top: 1px solid var(--border);
+    font-size: 0.7rem;
+    color: var(--faded);
+    letter-spacing: 1px;
+    font-family: 'Special Elite', cursive;
+    text-transform: uppercase;
+  }
+
+  /* ─── CHARACTERS ─── */
+  #characters {
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    padding: 0 0 5rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  #characters::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse 60% 50% at 50% 50%, rgba(230,57,70,0.05) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .characters-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 1.25rem;
+  }
+
+  .character-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    padding: 1.75rem 1.5rem;
+    text-align: center;
+    position: relative;
+    transition: border-color 0.25s, transform 0.3s, box-shadow 0.3s;
+    opacity: 0;
+    transform: translateY(24px);
+    overflow: hidden;
+  }
+
+  .character-card.visible {
+    opacity: 1;
+    transform: translateY(0);
+    transition: opacity 0.55s ease, transform 0.55s ease,
+                border-color 0.25s, box-shadow 0.3s;
+  }
+
+  .character-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, var(--red-dim) 0%, transparent 60%);
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  .character-card:hover {
+    border-color: rgba(230,57,70,0.5);
+    transform: translateY(-4px);
+    box-shadow: 0 12px 30px rgba(0,0,0,0.5);
+  }
+
+  .character-card:hover::before { opacity: 1; }
+
+  .char-initial {
+    width: 64px; height: 64px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--red), #a02030);
+    border: 2px solid rgba(230,57,70,0.4);
+    margin: 0 auto 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #fff;
+    box-shadow: 0 0 20px var(--red-dim);
+    position: relative;
+    z-index: 1;
+  }
+
+  .char-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 1rem;
+    color: var(--cream);
+    font-weight: 700;
+    margin-bottom: 0.25rem;
+    position: relative; z-index: 1;
+  }
+
+  .char-show {
+    font-size: 0.65rem;
+    letter-spacing: 2.5px;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 0.75rem;
+    font-family: 'Special Elite', cursive;
+    position: relative; z-index: 1;
+  }
+
+  .char-desc {
+    font-size: 0.78rem;
+    line-height: 1.65;
+    color: var(--muted);
+    font-style: italic;
+    position: relative; z-index: 1;
+    font-family: 'Courier Prime', monospace;
+  }
+
+  /* ─── WATCHLIST ─── */
+  #watchlist { padding: 0 0 6rem; }
+
+  .watchlist-intro {
+    text-align: center;
+    font-style: italic;
+    color: var(--muted);
+    font-size: 0.88rem;
+    margin-top: -1.5rem;
+    margin-bottom: 2.5rem;
+    font-family: 'Courier Prime', monospace;
+  }
+
+  .watchlist-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 1.25rem;
+  }
+
+  .watchlist-item {
+    background: var(--card);
+    border: 1px solid var(--border);
+    padding: 1.5rem;
+    display: flex;
+    gap: 1.1rem;
+    align-items: flex-start;
+    transition: border-color 0.25s, transform 0.3s, box-shadow 0.3s;
+    position: relative;
+    overflow: hidden;
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  .watchlist-item.visible {
+    opacity: 1;
+    transform: translateY(0);
+    transition: opacity 0.5s ease, transform 0.5s ease,
+                border-color 0.25s, box-shadow 0.3s;
+  }
+
+  .watchlist-item::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 2px;
+    background: var(--red);
+    transform: scaleY(0);
+    transform-origin: top;
+    transition: transform 0.3s ease;
+  }
+
+  .watchlist-item:hover {
+    border-color: var(--border2);
+    transform: translateX(4px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+  }
+
+  .watchlist-item:hover::before { transform: scaleY(1); }
+
+  .wl-number {
+    font-family: 'Playfair Display', serif;
+    font-size: 2rem;
+    font-weight: 900;
+    font-style: italic;
+    color: var(--border2);
+    line-height: 1;
+    min-width: 2.5rem;
+    padding-top: 2px;
+    transition: color 0.25s;
+  }
+
+  .watchlist-item:hover .wl-number { color: var(--red); }
+
+  .wl-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--cream);
+    margin-bottom: 0.2rem;
+  }
+
+  .wl-genre {
+    font-size: 0.65rem;
+    letter-spacing: 2.5px;
+    color: var(--red);
+    text-transform: uppercase;
+    font-family: 'Special Elite', cursive;
+    margin-bottom: 0.4rem;
+  }
+
+  .wl-note {
+    font-size: 0.78rem;
+    line-height: 1.6;
+    color: var(--muted);
+    font-style: italic;
+    font-family: 'Courier Prime', monospace;
+  }
+
+  .wl-badge {
+    display: inline-block;
+    margin-top: 0.6rem;
+    padding: 3px 10px;
+    font-size: 0.6rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    font-family: 'Special Elite', cursive;
+    border-radius: 2px;
+  }
+
+  .wl-badge.must    { background: var(--red); color: #fff; }
+  .wl-badge.classic { background: transparent; color: var(--gold); border: 1px solid var(--gold); }
+  .wl-badge.hidden  { background: transparent; color: var(--muted); border: 1px solid var(--border2); }
+
+  /* ─── FOOTER ─── */
+  footer {
+    background: var(--bg);
+    border-top: 1px solid var(--border);
+    text-align: center;
+    padding: 3.5rem 1rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  footer::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 50%; transform: translateX(-50%);
+    width: 200px; height: 1px;
+    background: linear-gradient(90deg, transparent, var(--red), transparent);
+  }
+
+  .footer-logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.5rem;
+    font-style: italic;
+    color: var(--red);
+    margin-bottom: 1rem;
+  }
+
+  footer p {
+    font-family: 'Special Elite', cursive;
+    color: var(--muted);
+    font-size: 0.75rem;
+    letter-spacing: 2px;
+  }
+
+  footer p span { color: var(--gold); }
+
+  footer .footer-tagline {
+    margin-top: 0.5rem;
+    font-size: 0.65rem;
+    opacity: 0.5;
+  }
+
+  /* ─── ANIMATIONS ─── */
+  @keyframes riseIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ─── RESPONSIVE ─── */
+  @media (max-width: 640px) {
+    .shows-grid, .characters-grid, .watchlist-grid {
+      grid-template-columns: 1fr;
+    }
+    .nav-brand { display: none; }
+    nav a { padding: 1rem 1.25rem; font-size: 0.68rem; letter-spacing: 2px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════ HEADER ══ -->
+<header>
+  <div class="header-bg"></div>
+  <div class="header-content">
+    <span class="header-eyebrow">✦ &nbsp; A Personal Television Archive &nbsp; ✦</span>
+    <h1>My <em>Favourite</em><br>TV Shows</h1>
+    <div class="header-rule"></div>
+    <p class="header-sub">— Curated with love &amp; strong opinions —</p>
+  </div>
+  <div class="header-scroll-hint">
+    <span class="scroll-label">Scroll</span>
+    <div class="scroll-line"></div>
+  </div>
+</header>
+
+<!-- ══════════════════════════════ NAV ══ -->
+<nav>
+  <span class="nav-brand">Favourites</span>
+  <a href="#shows" class="active">The Shows</a>
+  <a href="#characters">Characters</a>
+  <a href="#watchlist">Watchlist</a>
+</nav>
+
+<!-- ══════════════════════════ SHOWS ══ -->
+<section id="shows">
+  <div class="container">
+    <div class="section-header">
+      <span class="eyebrow">Now Watching</span>
+      <h2>The <em>Collection</em></h2>
+      <div class="section-rule"><span>✦</span></div>
+    </div>
+
+    <div class="shows-grid">
+
+      <!-- CARD 1 -->
+      <article class="show-card">
+        <div class="card-poster-wrap">
+          <img class="card-poster" src="images/the-rookie.jpg.webp" alt="The Rookie poster">
+        </div>
+        <div class="card-body">
+          <p class="card-genre">Drama · Crime</p>
+          <h3 class="card-title">The Rookie</h3>
+          <p class="card-years">2018 – Present</p>
+          <div class="card-rating">
+            <span class="stars">★★★★</span>
+            <span class="rating-num">8 / 10</span>
+          </div>
+          <p class="card-review">"A very good show — it was so sad when Jackson died. Lucy and Tim make the absolute perfect couple."</p>
+          <div class="card-footer">
+            <span>ABC</span>
+            <span>Crime · Drama</span>
+          </div>
+        </div>
+      </article>
+
+      <!-- CARD 2 -->
+      <article class="show-card">
+        <div class="card-poster-wrap">
+          <img class="card-poster" src="images/z-nation.jpg.webp" alt="Z Nation poster">
+        </div>
+        <div class="card-body">
+          <p class="card-genre">Sci-Fi · Horror</p>
+          <h3 class="card-title">Z Nation</h3>
+          <p class="card-years">2014 – 2018 · 5 Seasons</p>
+          <div class="card-rating">
+            <span class="stars">★★★</span>
+            <span class="rating-num">5 / 10</span>
+          </div>
+          <p class="card-review">"Didn't like the fact that 10K was bit by Murphy. The action is a bit off and the story is stretched out way too thin."</p>
+          <div class="card-footer">
+            <span>Syfy</span>
+            <span>Zombie · Post-Apocalyptic</span>
+          </div>
+        </div>
+      </article>
+
+      <!-- CARD 3 -->
+      <article class="show-card">
+        <div class="card-poster-wrap">
+          <img class="card-poster" src="images/off-campus.jpg.webp" alt="Off Campus poster">
+        </div>
+        <div class="card-body">
+          <p class="card-genre">Drama · Romance</p>
+          <h3 class="card-title">Off Campus</h3>
+          <p class="card-years">2023 – Present</p>
+          <div class="card-rating">
+            <span class="stars">★★★½</span>
+            <span class="rating-num">7 / 10</span>
+          </div>
+          <p class="card-review">"Not a perfect show — some of the acting is a bit off. But Hannah has an absolutely amazing voice and I can't wait for season 3."</p>
+          <div class="card-footer">
+            <span>Drama · Music</span>
+            <span>Awaiting Season 3</span>
+          </div>
+        </div>
+      </article>
+
+      <!-- CARD 4 -->
+      <article class="show-card">
+        <div class="card-poster-wrap">
+          <img class="card-poster" src="images/lighter-and-princess.jpg.webp" alt="Lighter and Princess poster">
+        </div>
+        <div class="card-body">
+          <p class="card-genre">Romance · C-Drama</p>
+          <h3 class="card-title">Lighter &amp; Princess</h3>
+          <p class="card-years">2022</p>
+          <div class="card-rating">
+            <span class="stars">★★★★</span>
+            <span class="rating-num">8 / 10</span>
+          </div>
+          <p class="card-review">"Li Xun was a bit too cold to Gao Jianhong. It was unnecessary to push Zhu Yun away — even if he only wanted to protect her."</p>
+          <div class="card-footer">
+            <span>Chinese Drama</span>
+            <span>Romance · Campus</span>
+          </div>
+        </div>
+      </article>
+
+      <!-- CARD 5 -->
+      <article class="show-card">
+        <div class="card-poster-wrap">
+          <img class="card-poster" src="images/hear-me.jpg.webp" alt="Hear Me poster">
+        </div>
+        <div class="card-body">
+          <p class="card-genre">Drama · K-Drama</p>
+          <h3 class="card-title">Hear Me</h3>
+          <p class="card-years">2021 – Present</p>
+          <div class="card-rating">
+            <span class="stars">★★★½</span>
+            <span class="rating-num">7 / 10</span>
+          </div>
+          <p class="card-review">"They went a bit too overboard with the bullying storyline. I also didn't like how they changed Leyla's character — it felt like a betrayal."</p>
+          <div class="card-footer">
+            <span>K-Drama</span>
+            <span>School · Teen Drama</span>
+          </div>
+        </div>
+      </article>
+
+      <!-- CARD 6 -->
+      <article class="show-card">
+        <div class="card-poster-wrap">
+          <img class="card-poster" src="images/jewel-of-section-e.jpg.webp" alt="The Jewel of Section E poster">
+        </div>
+        <div class="card-body">
+          <p class="card-genre">Romance · Drama</p>
+          <h3 class="card-title">The Jewel of Section E</h3>
+          <p class="card-years">2023 – Present</p>
+          <div class="card-rating">
+            <span class="stars">★★★★½</span>
+            <span class="rating-num">9 / 10</span>
+          </div>
+          <p class="card-review">"Love how they made Jay a strong character who can defend herself. I just wish Keifer would let Jay speak for herself instead of jumping to conclusions."</p>
+          <div class="card-footer">
+            <span>Action · Thriller</span>
+            <span>Strong Female Lead</span>
+          </div>
+        </div>
+      </article>
+
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════ CHARACTERS ══ -->
+<section id="characters">
+  <div class="container">
+    <div class="section-header">
+      <span class="eyebrow">The Cast</span>
+      <h2>Unforgettable <em>Characters</em></h2>
+      <div class="section-rule"><span>✦</span></div>
+    </div>
+
+    <div class="characters-grid">
+
+      <div class="character-card">
+        <div class="char-initial">JN</div>
+        <p class="char-name">John Nolan</p>
+        <p class="char-show">The Rookie</p>
+        <p class="char-desc">At 40, John Nolan leaves his old life behind and moves to LA to follow his dream of becoming a police officer. He proves it's never too late to start over.</p>
+      </div>
+
+      <div class="character-card">
+        <div class="char-initial">MU</div>
+        <p class="char-name">Murphy</p>
+        <p class="char-show">Z Nation</p>
+        <p class="char-desc">The last hope for humanity. After a zombie virus tears the world apart, Murphy's experimental antidote makes him the most important — and complicated — man alive.</p>
+      </div>
+
+      <div class="character-card">
+        <div class="char-initial">H&amp;G</div>
+        <p class="char-name">Hannah Wells &amp; Garrett Graham</p>
+        <p class="char-show">Off Campus</p>
+        <p class="char-desc">A slow-burn love story between a talented music student and the university's star hockey player. Two worlds, one undeniable connection.</p>
+      </div>
+
+      <div class="character-card">
+        <div class="char-initial">Z&amp;L</div>
+        <p class="char-name">Zhu Yun &amp; Li Xun</p>
+        <p class="char-show">Lighter &amp; Princess</p>
+        <p class="char-desc">Zhu Yun's fresh university life is thrown into chaos the moment the brooding, ice-cold Li Xun arrives. The pull between them is undeniable — even when he pushes her away.</p>
+      </div>
+
+      <div class="character-card">
+        <div class="char-initial">ELK</div>
+        <p class="char-name">Ekim, Leyla &amp; Kanat</p>
+        <p class="char-show">Hear Me</p>
+        <p class="char-desc">When Ekim infiltrates a wealthy school to find justice for her injured best friend, she falls for the school's most feared bully — and her heart starts fighting her head.</p>
+      </div>
+
+      <div class="character-card">
+        <div class="char-initial">JJ</div>
+        <p class="char-name">Jasper "Jay-Jay" Mariano</p>
+        <p class="char-show">The Jewel of Section E</p>
+        <p class="char-desc">All Jay wanted was a fresh start — instead she finds herself the only girl in the notorious all-male delinquent Section E. Targeted by pranks, she holds her own.</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════ WATCHLIST ══ -->
+<section id="watchlist">
+  <div class="container">
+    <div class="section-header">
+      <span class="eyebrow">Recommendations</span>
+      <h2>The <em>Watchlist</em></h2>
+      <div class="section-rule"><span>✦</span></div>
+    </div>
+    <p class="watchlist-intro">Shows I recommend — for the uninitiated &amp; the nostalgic alike.</p>
+
+    <div class="watchlist-grid">
+
+      <div class="watchlist-item">
+        <span class="wl-number">01</span>
+        <div class="wl-content">
+          <p class="wl-title">Squid Game</p>
+          <p class="wl-genre">Thriller · Korean Drama</p>
+          <p class="wl-note">456 desperate people. One deadly game. Clear your entire weekend — you won't be putting it down.</p>
+          <span class="wl-badge must">Must Watch</span>
+        </div>
+      </div>
+
+      <div class="watchlist-item">
+        <span class="wl-number">02</span>
+        <div class="wl-content">
+          <p class="wl-title">Prison Break</p>
+          <p class="wl-genre">Action · Crime</p>
+          <p class="wl-note">A genius engineer tattoos prison blueprints onto his body to break his wrongly convicted brother out of death row. One of the most gripping first seasons ever made.</p>
+          <span class="wl-badge classic">Timeless</span>
+        </div>
+      </div>
+
+      <div class="watchlist-item">
+        <span class="wl-number">03</span>
+        <div class="wl-content">
+          <p class="wl-title">Crash Landing on You</p>
+          <p class="wl-genre">Romance · K-Drama</p>
+          <p class="wl-note">A South Korean heiress accidentally paraglides into North Korea and lands — quite literally — into the arms of a military officer. Completely addictive.</p>
+          <span class="wl-badge must">Must Watch</span>
+        </div>
+      </div>
+
+      <div class="watchlist-item">
+        <span class="wl-number">04</span>
+        <div class="wl-content">
+          <p class="wl-title">Dark</p>
+          <p class="wl-genre">Sci-Fi · Mystery</p>
+          <p class="wl-note">A German time-travel thriller so intricately plotted it comes with a character map. Eerie, beautiful and unlike anything else on television.</p>
+          <span class="wl-badge hidden">Hidden Gem</span>
+        </div>
+      </div>
+
+      <div class="watchlist-item">
+        <span class="wl-number">05</span>
+        <div class="wl-content">
+          <p class="wl-title">Suits</p>
+          <p class="wl-genre">Drama · Legal</p>
+          <p class="wl-note">A college dropout with a photographic memory bluffs his way into one of New York's top law firms. Slick, sharp and endlessly rewatchable.</p>
+          <span class="wl-badge classic">Timeless</span>
+        </div>
+      </div>
+
+      <div class="watchlist-item">
+        <span class="wl-number">06</span>
+        <div class="wl-content">
+          <p class="wl-title">My Love from the Star</p>
+          <p class="wl-genre">Romance · Fantasy · K-Drama</p>
+          <p class="wl-note">An alien who landed on Earth 400 years ago falls hopelessly in love with a top celebrity — just as his time to leave is running out. Funny, emotional, impossible to resist.</p>
+          <span class="wl-badge hidden">Hidden Gem</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════ FOOTER ══ -->
+<footer>
+  <div class="footer-logo">Favourites</div>
+  <p>Compiled with <span>♥</span> &nbsp;·&nbsp; Est. <span>2025</span></p>
+  <p class="footer-tagline">Built for GitHub Pages &nbsp;·&nbsp; No algorithms. Just taste.</p>
+</footer>
+
+<script>
+  // ── Sticky nav active state on scroll ──
+  const navLinks = document.querySelectorAll('nav a[href^="#"]');
+  const sections = ['shows','characters','watchlist'].map(id => document.getElementById(id));
+
+  navLinks.forEach(a => {
+    a.addEventListener('click', e => {
+      e.preventDefault();
+      document.querySelector(a.getAttribute('href')).scrollIntoView({ behavior: 'smooth' });
+      navLinks.forEach(l => l.classList.remove('active'));
+      a.classList.add('active');
+    });
+  });
+
+  window.addEventListener('scroll', () => {
+    const mid = window.scrollY + window.innerHeight / 2;
+    sections.forEach(sec => {
+      if (sec && mid >= sec.offsetTop && mid < sec.offsetTop + sec.offsetHeight) {
+        navLinks.forEach(a => {
+          a.classList.toggle('active', a.getAttribute('href') === '#' + sec.id);
+        });
+      }
+    });
+  });
+
+  // ── Scroll-triggered reveal ──
+  const revealEls = document.querySelectorAll('.show-card, .character-card, .watchlist-item');
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry, i) => {
+      if (entry.isIntersecting) {
+        // stagger by index within parent
+        const siblings = Array.from(entry.target.parentElement.children);
+        const idx = siblings.indexOf(entry.target);
+        entry.target.style.transitionDelay = `${idx * 0.07}s`;
+        entry.target.classList.add('visible');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+
+  revealEls.forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
